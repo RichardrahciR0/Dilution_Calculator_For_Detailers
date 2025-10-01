@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dilution Ratio Calculator</title>
+  <title>ShinePro Dilution Calculator</title>
   <style>
     :root{
       --bg:#0b0f14;--panel:#111722;--muted:#9fb0c3;--text:#e9f0f7;--accent:#4cc9f0;--accent2:#80ffdb;--danger:#ff6b6b;
@@ -79,12 +79,14 @@
     .usechips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
     .usechip{padding:6px 10px; border-radius:999px; border:1px solid #27435d; background:#0f1520; cursor:pointer; color:#cfe6f8; font-size:13px}
     .usechip:hover{border-color:#2b4d66}
+  /* larger tap targets for iPhone */
+    input, select, button { min-height: 44px; }
   </style>
 </head>
 <body>
   <div class="app">
     <header style="margin:0 0 16px 4px">
-      <h1 class="title">Dilution Ratio Calculator</h1>
+      <h1 class="title">ShinePro Dilution Calculator</h1>
       <p class="sub">Enter a ratio and either a <strong>water volume</strong> or a <strong>total solution</strong>. The calculator gives exact chemical and water amounts with unit conversions.</p>
     </header>
 
@@ -190,6 +192,37 @@
               <button class="btn full" id="fillBottle">Fill Bottle Using Above Ratio</button>
             </div>
           </div>
+          <div class="row" style="margin-top:12px">
+            <div>
+              <label for="bottlePlan">Plan Bottle (Preview)</label>
+              <button class="btn full" id="planBottle">Calculate for Bottle Size</button>
+            </div>
+            <div>
+              <label for="waterOverride">Optional: Adjust Water</label>
+              <div class="ctl">
+                <input id="waterOverride" type="number" min="0" step="0.01" placeholder="e.g. 0.9">
+                <select id="waterOverrideUnit" class="units">
+                  <option value="same">Same as bottle</option>
+                  <option value="L">L</option>
+                  <option value="mL">mL</option>
+                  <option value="oz">oz</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="result" style="margin-top:12px">
+            <div class="box">
+              <h3>For This Bottle</h3>
+              <div class="big" id="bottleChem">—</div>
+              <div class="muted" id="bottleChemAlt">&nbsp;</div>
+            </div>
+            <div class="box">
+              <h3>Water in Bottle</h3>
+              <div class="big" id="bottleWater">—</div>
+              <div class="muted" id="bottleWaterAlt">&nbsp;</div>
+            </div>
+          </div>
+          <p class="kicker" id="bottleNote" style="margin-top:6px"></p>
         </div>
       </div>
 
@@ -572,7 +605,56 @@
         const data = JSON.parse(text);
         if(Array.isArray(data)){
           CHEM_DB = data; refreshBrandFilter(); renderChemList();
-        } else { alert('Invalid JSON: expected an array'); }
+
+    // ------- Bottle planning & adjustable water -------
+    const planBottleBtn = $('#planBottle');
+    const waterOverride = $('#waterOverride');
+    const waterOverrideUnit = $('#waterOverrideUnit');
+    const bottleChem = $('#bottleChem');
+    const bottleChemAlt = $('#bottleChemAlt');
+    const bottleWater = $('#bottleWater');
+    const bottleWaterAlt = $('#bottleWaterAlt');
+    const bottleNote = $('#bottleNote');
+
+    function planBottle(){
+      const c = Math.max(0, Number(ratioChem.value||0));
+      const w = Math.max(0, Number(ratioWater.value||0));
+      const fracC = c/(c+w), fracW = w/(c+w);
+      const bUnit = bottleUnit.value;
+      const bottleML = Unit.toML(Number(bottle.value||0), bUnit);
+      if(!isFinite(fracC) || bottleML<=0){
+        bottleChem.textContent='—'; bottleWater.textContent='—'; bottleChemAlt.textContent=''; bottleWaterAlt.textContent=''; bottleNote.textContent='';
+        return;
+      }
+      // recommended (exact ratio) amounts
+      const recChemML = bottleML * fracC;
+      const recWaterML = bottleML * fracW;
+
+      // override water if provided
+      let useWaterML = recWaterML;
+      if(waterOverride && waterOverride.value){
+        const u = waterOverrideUnit.value==='same' ? bUnit : waterOverrideUnit.value;
+        useWaterML = Unit.toML(Number(waterOverride.value||0), u);
+      }
+      // compute chem given chosen water, keeping bottle size fixed
+      let useChemML = Math.max(0, bottleML - useWaterML);
+
+      // Display in bottle unit + alt unit
+      const altUnit = bUnit === 'L' ? 'mL' : bUnit === 'mL' ? 'L' : bUnit === 'oz' ? 'mL' : 'oz';
+      bottleChem.textContent = `${Unit.fmt(Unit.fromML(useChemML, bUnit))} ${bUnit}`;
+      bottleWater.textContent = `${Unit.fmt(Unit.fromML(useWaterML, bUnit))} ${bUnit}`;
+      bottleChemAlt.textContent = `${Unit.fmt(Unit.fromML(useChemML, altUnit))} ${altUnit}`;
+      bottleWaterAlt.textContent = `${Unit.fmt(Unit.fromML(useWaterML, altUnit))} ${altUnit}`;
+
+      // deviation from exact ratio (if any)
+      const dev = recChemML>0 ? Math.abs(useChemML - recChemML)/recChemML*100 : 0;
+      bottleNote.textContent = dev>1 ? `Note: This deviates from the exact ${c}:${w} ratio by ${dev.toFixed(1)}%.` : `Exact for ${c}:${w}.`;
+    }
+
+    if(planBottleBtn){ planBottleBtn.addEventListener('click', planBottle); }
+    [bottle, bottleUnit, waterOverride, waterOverrideUnit, ratioChem, ratioWater].forEach(el=> el && el.addEventListener('input', planBottle));
+
+  } else { alert('Invalid JSON: expected an array'); }
       }catch(err){ alert('Failed to import JSON: '+err.message); }
     });
 
