@@ -5,36 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ShinePro Dilution Calculator</title>
   <style>
-    :root {
-      --bg:#0b0f14; --panel:#111722; --muted:#9fb0c3; --text:#e9f0f7;
-      --accent:#4cc9f0; --accent2:#80ffdb; --danger:#ff6b6b;
+    :root{
+      --bg:#0b0f14;--panel:#111722;--muted:#9fb0c3;--text:#e9f0f7;--accent:#4cc9f0;--accent2:#80ffdb;--danger:#ff6b6b;
       --ring: 0 0 0 3px rgba(76,201,240,.25);
     }
-    [data-theme="light"] {
-      --bg:#f8fafc; --panel:#ffffff; --muted:#475569; --text:#111827;
-      --accent:#0ea5e9; --accent2:#14b8a6; --danger:#dc2626;
-      --ring:0 0 0 3px rgba(14,165,233,.25);
-    }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial;
-      background: var(--bg);
-      color:var(--text); display:flex; align-items:flex-start; justify-content:center; padding:32px;
+      margin:0; font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      background: radial-gradient(1200px 800px at 80% -10%, #132033, transparent 70%),
+                  radial-gradient(900px 600px at -10% 120%, #0f1b2b, transparent 60%),
+                  var(--bg);
+      color:var(--text); display:flex; align-items:center; justify-content:center; padding:32px;
     }
-    .app{width:min(1100px,100%)}
+    .app{width: min(1100px, 100%);}
+    .grid{display:grid; grid-template-columns: 1.1fr 0.9fr; gap:20px}
+    @media (max-width: 980px){ .grid{grid-template-columns: 1fr;}}
 
-    h1.title{font-size:clamp(26px,3vw,34px); margin:0 0 6px; font-weight:800}
-    p.sub{color:var(--muted); margin:0 0 18px}
+    .card{background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+          border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:20px; box-shadow: 0 10px 30px rgba(0,0,0,.25)}
+    .title{font-size: clamp(24px, 3vw, 34px); letter-spacing:.2px; margin:0 0 6px; font-weight:800}
+    .sub{color:var(--muted); margin:0 0 18px; font-weight:500}
 
-    .card{background:var(--panel); border:1px solid rgba(0,0,0,.1); border-radius:16px; padding:20px; margin-bottom:16px}
-    .btn{cursor:pointer; border:1px solid #2b4d66; border-radius:12px; padding:10px 14px; font-weight:700; background:var(--panel); color:var(--text)}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .row-3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px}
+    .row-4{display:grid; grid-template-columns: repeat(4, 1fr); gap:12px}
+    @media (max-width: 720px){.row,.row-3,.row-4{grid-template-columns:1fr}}
+
+    label{display:block; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:#b7c7d8; margin:0 0 6px}
+    .ctl{display:flex; align-items:center; gap:8px; background:#0f1520; border:1px solid #1d2a3c; border-radius:12px; padding:10px 12px}
+    .ctl:focus-within{box-shadow:var(--ring); border-color: #264563}
+    .ctl input, .ctl select{flex:1; background:transparent; border:0; outline:0; color:var(--text); font-size:16px}
+    .ctl input::-webkit-outer-spin-button,.ctl input::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+    .units{min-width:86px}
+    .split{display:grid; grid-template-columns: 1fr auto 1fr; gap:8px; align-items:center}
+    .colon{padding:10px 6px; opacity:.7}
+
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 14px}
+    .tab{border:1px solid #1d2a3c; background:#0f1520; color:#c9d7e6; padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600}
+    .tab.active{background: linear-gradient(180deg, rgba(76,201,240,.18), rgba(0,0,0,0)); border-color:#2b4d66; color:#e9f6ff}
+
+    .badge{display:inline-flex; align-items:center; gap:8px; background:#0f1520; border:1px dashed #27435d; border-radius:999px; padding:8px 12px; color:#b9cfe3}
+
+    .btn{cursor:pointer; border:1px solid #2b4d66; background: linear-gradient(180deg, rgba(76,201,240,.12), rgba(0,0,0,0)); color:#e7f6ff; border-radius:12px; padding:12px 14px; font-weight:700}
     .btn:hover{filter:brightness(1.1)}
-    .footer{margin-top:12px; display:flex; flex-wrap:wrap; gap:10px; align-items:center}
-    .badge{display:inline-flex; align-items:center; gap:6px; background:var(--panel); border:1px dashed #334155; border-radius:999px; padding:6px 12px; color:var(--muted)}
+    .btn.secondary{background:#0f1520; border-color:#1d2a3c; color:#c9d7e6}
+    .btn.full{width:100%}
 
-    /* tap friendly */
+    .result{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 650px){.result{grid-template-columns:1fr}}
+    .result .box{background:linear-gradient(180deg, rgba(128,255,219,.12), rgba(0,0,0,0)); border:1px solid #2a4f44; border-radius:14px; padding:16px}
+    .result h3{margin:0 0 2px; font-weight:800; letter-spacing:.2px}
+    .result .big{font-size: clamp(28px, 5.2vw, 42px); font-weight:900}
+    .muted{color:#9fb0c3}
+
+    .presets{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{padding:8px 10px; border-radius:999px; border:1px solid #1d2a3c; background:#0f1520; cursor:pointer; color:#cfe6f8}
+    .chip:hover{border-color:#2b4d66}
+
+    .kicker{font-size:12px; color:#9fb0c3}
+    .table{width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px; border:1px solid #1d2a3c}
+    .table th,.table td{padding:10px 12px; border-bottom:1px solid #1d2a3c; text-align:left}
+    .table th{font-size:12px; color:#9fb0c3; font-weight:700; letter-spacing:.3px; text-transform:uppercase}
+    .table tr:last-child td{border-bottom:0}
+    .table code{background:#0f1520; border:1px solid #1d2a3c; padding:2px 6px; border-radius:8px}
+
+    .footer{margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .library{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:900px){.library{grid-template-columns:1fr}}
+    .prod{background:#0f1520; border:1px solid #1d2a3c; border-radius:14px; padding:14px}
+    .prod h4{margin:0 0 6px; font-size:16px}
+    .prod .brand{color:#9fb0c3; font-size:12px; letter-spacing:.3px; text-transform:uppercase}
+    .usechips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .usechip{padding:6px 10px; border-radius:999px; border:1px solid #27435d; background:#0f1520; cursor:pointer; color:#cfe6f8; font-size:13px}
+    .usechip:hover{border-color:#2b4d66}
+  /* larger tap targets for iPhone */
     input, select, button { min-height: 44px; }
   </style>
 </head>
@@ -43,99 +88,587 @@
     <header style="margin:0 0 16px 4px">
       <h1 class="title">ShinePro Dilution Calculator</h1>
       <p class="sub">Enter a ratio and either a <strong>water volume</strong> or a <strong>total solution</strong>. The calculator gives exact chemical and water amounts with unit conversions.</p>
-      <div class="footer">
-        <label class="badge"><input id="simpleToggle" type="checkbox"> Simple mode</label>
-        <label class="badge"><input id="themeToggle" type="checkbox"> Light mode</label>
-      </div>
     </header>
 
-    <!-- Simple mode card -->
-    <div id="simpleCard" class="card" style="display:none">
-      <h3>Quick Input</h3>
-      <div>
-        <label for="ratioQuick">Ratio or %</label>
-        <input id="ratioQuick" placeholder="e.g. 1:15 or 9%">
-      </div>
-      <div>
-        <label for="amountQuick">Amount</label>
-        <input id="amountQuick" type="number" value="1">
-        <select id="amountQuickUnit"><option>L</option><option>mL</option><option>oz</option></select>
-      </div>
-      <div>
-        <label for="basisQuick">I have</label>
-        <select id="basisQuick"><option value="water">Water amount</option><option value="total">Total solution</option></select>
-      </div>
-      <button class="btn" id="calcQuick">Calculate</button>
-      <div class="footer">
-        <div>Concentrate: <span id="chemQuick">—</span></div>
-        <div>Water: <span id="waterQuick">—</span></div>
-      </div>
+    <div class="grid">
+      <!-- INPUTS -->
+      <section class="card" aria-label="Inputs">
+        <div class="tabs" role="tablist" aria-label="Calculation mode">
+          <button class="tab active" data-mode="water" role="tab" aria-selected="true">Given Water Volume</button>
+          <button class="tab" data-mode="total" role="tab" aria-selected="false">Given Total Solution</button>
+          <button class="tab" data-mode="percent" role="tab" aria-selected="false">By % Concentrate</button>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="ratioChem">Dilution Ratio (C:W)</label>
+            <div class="split">
+              <div class="ctl"><input id="ratioChem" type="number" min="0" step="1" value="1" aria-label="Concentrate part"></div>
+              <div class="colon">:</div>
+              <div class="ctl"><input id="ratioWater" type="number" min="0" step="1" value="10" aria-label="Water part"></div>
+            </div>
+          </div>
+          <div id="percentWrap" style="display:none">
+            <label for="percent">Desired % Concentrate</label>
+            <div class="ctl"><input id="percent" type="number" min="0" max="100" step="0.1" value="9.1"></div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <div id="waterWrap">
+            <label for="water">Water Amount</label>
+            <div class="ctl">
+              <input id="water" type="number" min="0" step="0.01" value="1">
+              <select id="waterUnit" class="units">
+                <option value="L">L</option>
+                <option value="mL">mL</option>
+                <option value="gal">gal</option>
+                <option value="oz">oz</option>
+              </select>
+            </div>
+          </div>
+          <div id="totalWrap" style="display:none">
+            <label for="total">Total Solution</label>
+            <div class="ctl">
+              <input id="total" type="number" min="0" step="0.01" value="1">
+              <select id="totalUnit" class="units">
+                <option value="L">L</option>
+                <option value="mL">mL</option>
+                <option value="gal">gal</option>
+                <option value="oz">oz</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <span class="badge" id="ratioBadge">Ratio 1:10 → 9.09% concentrate</span>
+          <button class="btn" id="swapBtn" title="Swap concentrate/water parts">Swap parts</button>
+          <button class="btn secondary" id="resetBtn">Reset</button>
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="card" aria-label="Results">
+        <div class="result">
+          <div class="box">
+            <h3>Concentrate Needed</h3>
+            <div class="big" id="chemMain">—</div>
+            <div class="muted" id="chemAlt">&nbsp;</div>
+          </div>
+          <div class="box">
+            <h3>Water Needed</h3>
+            <div class="big" id="waterMain">—</div>
+            <div class="muted" id="waterAlt">&nbsp;</div>
+          </div>
+        </div>
+        <p class="kicker" style="margin-top:10px">Tip: Click a preset below to auto‑fill typical detailing dilutions.</p>
+      </section>
     </div>
 
-    <!-- Advanced mode (kept from your earlier version) -->
-    <div class="card">
-      <h3>Bottle Size Helper</h3>
-      <div>
-        <label for="bottle">Bottle Size</label>
-        <input id="bottle" type="number" value="1">
-        <select id="bottleUnit"><option>L</option><option>mL</option><option>oz</option></select>
+    <!-- PRESETS & EXTRAS -->
+    <section class="card" style="margin-top:16px">
+      <div class="row">
+        <div>
+          <h3 style="margin:0 0 8px">Quick Presets</h3>
+          <div class="presets" id="presets"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px">Bottle Size Helper</h3>
+          <div class="row">
+            <div>
+              <label for="bottle">Bottle Size</label>
+              <div class="ctl">
+                <input id="bottle" type="number" min="0" step="0.01" value="1">
+                <select id="bottleUnit" class="units">
+                  <option value="L">L</option>
+                  <option value="mL">mL</option>
+                  <option value="oz">oz</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button class="btn full" id="fillBottle">Fill Bottle Using Above Ratio</button>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <div>
+              <label for="bottlePlan">Plan Bottle (Preview)</label>
+              <button class="btn full" id="planBottle">Calculate for Bottle Size</button>
+            </div>
+            <div>
+              <label for="waterOverride">Optional: Adjust Water</label>
+              <div class="ctl">
+                <input id="waterOverride" type="number" min="0" step="0.01" placeholder="e.g. 0.9">
+                <select id="waterOverrideUnit" class="units">
+                  <option value="same">Same as bottle</option>
+                  <option value="L">L</option>
+                  <option value="mL">mL</option>
+                  <option value="oz">oz</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="result" style="margin-top:12px">
+            <div class="box">
+              <h3>For This Bottle</h3>
+              <div class="big" id="bottleChem">—</div>
+              <div class="muted" id="bottleChemAlt">&nbsp;</div>
+            </div>
+            <div class="box">
+              <h3>Water in Bottle</h3>
+              <div class="big" id="bottleWater">—</div>
+              <div class="muted" id="bottleWaterAlt">&nbsp;</div>
+            </div>
+          </div>
+          <p class="kicker" id="bottleNote" style="margin-top:6px"></p>
+        </div>
       </div>
-      <div>
-        <button class="btn" id="planBottle">Calculate for Bottle Size</button>
+
+      <div style="margin-top:16px">
+        <table class="table" aria-label="Common dilutions">
+          <thead><tr><th>Use‑case</th><th>Typical Ratio</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>APC – interior</td><td><code>1:10 – 1:20</code></td><td>Mild for plastics & fabrics.</td></tr>
+            <tr><td>APC – exterior</td><td><code>1:5 – 1:30</code></td><td>Stronger cut for tires, jambs.</td></tr>
+            <tr><td>Degreaser</td><td><code>1:3 – 1:5</code></td><td>Spot test first.</td></tr>
+            <tr><td>Wheel cleaner (maintenance)</td><td><code>1:10 – 1:20</code></td><td>Avoid hot brakes.</td></tr>
+            <tr><td>Foam cannon pre‑wash</td><td><code>1:10 – 1:20</code></td><td>Adjust to dwell & soil.</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div>
-        <label>Optional: Adjust Water</label>
-        <input id="waterOverride" type="number" placeholder="e.g. 0.9">
-        <select id="waterOverrideUnit"><option value="same">Same as bottle</option><option>L</option><option>mL</option><option>oz</option></select>
+    </section>
+
+    <!-- CHEMICAL LIBRARY -->
+    <section class="card" aria-label="Chemical Library" style="margin-top:16px">
+      <div class="row">
+        <div>
+          <h3 style="margin:0 0 8px">Chemical Library</h3>
+          <p class="kicker" style="margin:0 0 10px">Browse well‑known products and one‑click apply a recommended ratio. Always verify with the label/SDS.</p>
+        </div>
+        <div class="row">
+          <div>
+            <label for="chemSearch">Search</label>
+            <div class="ctl"><input id="chemSearch" placeholder="Brand or product name"></div>
+          </div>
+          <div>
+            <label for="chemBrand">Brand</label>
+            <div class="ctl">
+              <select id="chemBrand" class="units">
+                <option value="">All brands</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div id="chemList" class="library"></div>
+
       <div class="footer">
-        <div>Chemical: <span id="bottleChem">—</span></div>
-        <div>Water: <span id="bottleWater">—</span></div>
+        <button class="btn secondary" id="exportDb">Export Library JSON</button>
+        <label class="btn" for="importDbInput" style="cursor:pointer">Import JSON</label>
+        <input id="importDbInput" type="file" accept="application/json" style="display:none">
       </div>
-    </div>
+    </section>
+
+    <p class="kicker" style="margin-top:8px">Mathematics: For ratio <em>C:W</em> → concentrate fraction <em>C/(C+W)</em>. Given water amount <em>A</em>, chemical = <em>(C/W)×A</em>; total = <em>A×(1+C/W)</em>. Given total amount <em>T</em>, chemical = <em>T×C/(C+W)</em>, water = <em>T×W/(C+W)</em>.</p>
   </div>
 
   <script>
+    // ------ Utilities ------
     const Unit = {
-      toML(v,u){if(u==='mL')return v;if(u==='L')return v*1000;if(u==='oz')return v*29.57;return v},
-      fromML(v,u){if(u==='mL')return v;if(u==='L')return v/1000;if(u==='oz')return v/29.57;return v},
-      fmt(v){return Number(v.toFixed(2))}
+      toML(v, u){
+        if(!v || v<=0) return 0;
+        if(u==='mL') return v;
+        if(u==='L') return v*1000;
+        if(u==='oz') return v*29.5735;
+        if(u==='gal') return v*3785.41;
+        return v;
+      },
+      fromML(ml, u){
+        if(u==='mL') return ml;
+        if(u==='L') return ml/1000;
+        if(u==='oz') return ml/29.5735;
+        if(u==='gal') return ml/3785.41;
+        return ml;
+      },
+      fmt(v){
+        if(!isFinite(v)) return '—';
+        const n = Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 2 : 3;
+        return Number(v.toFixed(n)).toLocaleString();
+      }
     };
 
-    const simpleToggle=document.querySelector('#simpleToggle');
-    const simpleCard=document.querySelector('#simpleCard');
-    const ratioQuick=document.querySelector('#ratioQuick');
-    const amountQuick=document.querySelector('#amountQuick');
-    const amountQuickUnit=document.querySelector('#amountQuickUnit');
-    const basisQuick=document.querySelector('#basisQuick');
-    const chemQuick=document.querySelector('#chemQuick');
-    const waterQuick=document.querySelector('#waterQuick');
-    function parseRatio(txt){if(!txt)return null;txt=txt.trim().toLowerCase();let m=txt.match(/([0-9]+)\\s*%/);if(m){let p=+m[1];return {c:1,w:(100-p)/p};}m=txt.match(/([0-9]+)[:\\/x-]([0-9]+)/);if(m){return {c:+m[1],w:+m[2]};}return null;}
-    function computeQuick(){let r=parseRatio(ratioQuick.value);if(!r){chemQuick.textContent='—';waterQuick.textContent='—';return;}let amt=Unit.toML(+amountQuick.value,amountQuickUnit.value);let c=r.c,w=r.w;let fracC=c/(c+w);if(basisQuick.value==='water'){let chem=(c/w)*amt;chemQuick.textContent=Unit.fmt(Unit.fromML(chem,amountQuickUnit.value))+' '+amountQuickUnit.value;waterQuick.textContent=Unit.fmt(+amountQuick.value)+' '+amountQuickUnit.value;}else{let chem=amt*fracC;let water=amt-chem;chemQuick.textContent=Unit.fmt(Unit.fromML(chem,amountQuickUnit.value))+' '+amountQuickUnit.value;waterQuick.textContent=Unit.fmt(Unit.fromML(water,amountQuickUnit.value))+' '+amountQuickUnit.value;}}
-    document.querySelector('#calcQuick').addEventListener('click',computeQuick);
-    simpleToggle.addEventListener('change',()=>{simpleCard.style.display=simpleToggle.checked?'block':'none';});
+    const $ = (sel)=>document.querySelector(sel);
+    const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
 
-    // Bottle planner
-    const bottle=document.querySelector('#bottle'),bottleUnit=document.querySelector('#bottleUnit');
-    const waterOverride=document.querySelector('#waterOverride'),waterOverrideUnit=document.querySelector('#waterOverrideUnit');
-    const bottleChem=document.querySelector('#bottleChem'),bottleWater=document.querySelector('#bottleWater');
-    document.querySelector('#planBottle').addEventListener('click',()=>{
-      let c=1,w=10; // default ratio
-      let fracC=c/(c+w),fracW=w/(c+w);
-      let bml=Unit.toML(+bottle.value,bottleUnit.value);
-      let recChem=bml*fracC,recWater=bml*fracW;
-      let useWater=recWater;
-      if(waterOverride.value){useWater=Unit.toML(+waterOverride.value,waterOverrideUnit.value==='same'?bottleUnit.value:waterOverrideUnit.value);}
-      let useChem=bml-useWater;
-      bottleChem.textContent=Unit.fmt(Unit.fromML(useChem,bottleUnit.value))+' '+bottleUnit.value;
-      bottleWater.textContent=Unit.fmt(Unit.fromML(useWater,bottleUnit.value))+' '+bottleUnit.value;
+    // Elements
+    const ratioChem = $('#ratioChem');
+    const ratioWater = $('#ratioWater');
+    const percent = $('#percent');
+
+    const waterWrap = $('#waterWrap');
+    const water = $('#water');
+    const waterUnit = $('#waterUnit');
+
+    const totalWrap = $('#totalWrap');
+    const total = $('#total');
+    const totalUnit = $('#totalUnit');
+
+    const percentWrap = $('#percentWrap');
+
+    const ratioBadge = $('#ratioBadge');
+    const chemMain = $('#chemMain');
+    const chemAlt = $('#chemAlt');
+    const waterMain = $('#waterMain');
+    const waterAlt = $('#waterAlt');
+
+    const fillBottleBtn = $('#fillBottle');
+    const bottle = $('#bottle');
+    const bottleUnit = $('#bottleUnit');
+
+    const tabs = $$('.tab');
+    let mode = 'water'; // 'water' | 'total' | 'percent'
+
+    // Presets
+    const PRESETS = [
+      {label:'APC interior 1:15', c:1, w:15},
+      {label:'APC exterior 1:10', c:1, w:10},
+      {label:'Degreaser 1:4', c:1, w:4},
+      {label:'Wheel 1:15', c:1, w:15},
+      {label:'Pre‑wash foam 1:12', c:1, w:12},
+      {label:'Maintenance 1:20', c:1, w:20},
+      {label:'Strong 1:5', c:1, w:5},
+      {label:'Rinse‑free 1:256', c:1, w:256},
+    ];
+
+    // Init preset chips
+    const presetsEl = $('#presets');
+    PRESETS.forEach(p=>{
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.type = 'button';
+      b.textContent = p.label;
+      b.addEventListener('click', ()=>{ ratioChem.value=p.c; ratioWater.value=p.w; updateFromRatio(); compute(); });
+      presetsEl.appendChild(b);
     });
 
-    // Theme toggle
-    const themeToggle=document.querySelector('#themeToggle');
-    function applyTheme(){document.documentElement.setAttribute('data-theme', themeToggle.checked?'light':'dark');localStorage.setItem('shinepro_theme',themeToggle.checked?'light':'dark');}
-    themeToggle.addEventListener('change',applyTheme);
-    if(localStorage.getItem('shinepro_theme')==='light'){themeToggle.checked=true;applyTheme();}
+    // Tab switching
+    tabs.forEach(t=>t.addEventListener('click',()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      mode = t.dataset.mode;
+      const isWater = mode==='water';
+      const isTotal = mode==='total';
+      const isPct   = mode==='percent';
+      waterWrap.style.display = isWater? 'block':'none';
+      totalWrap.style.display = isTotal? 'block':'none';
+      percentWrap.style.display = isPct? 'block':'none';
+      if(isPct){
+        // Set ratio fields based on %
+        applyPercentToRatio();
+      }
+      compute();
+    }));
+
+    // Listeners
+    [ratioChem, ratioWater].forEach(el=>el.addEventListener('input',()=>{ updateFromRatio(); compute(); }));
+    [water, waterUnit, total, totalUnit, bottle, bottleUnit, percent].forEach(el=>el.addEventListener('input', compute));
+
+    $('#swapBtn').addEventListener('click',()=>{ const c=ratioChem.value; ratioChem.value=ratioWater.value; ratioWater.value=c; updateFromRatio(); compute(); });
+    $('#resetBtn').addEventListener('click',()=>{ ratioChem.value=1; ratioWater.value=10; water.value=1; waterUnit.value='L'; total.value=1; totalUnit.value='L'; bottle.value=1; bottleUnit.value='L'; percent.value=9.1; mode='water'; tabs.forEach(x=>{x.classList.toggle('active', x.dataset.mode==='water')}); waterWrap.style.display='block'; totalWrap.style.display='none'; percentWrap.style.display='none'; updateFromRatio(); compute(); });
+
+    fillBottleBtn.addEventListener('click',()=>{
+      // Fill bottle total based on bottle size using current ratio
+      total.value = bottle.value;
+      totalUnit.value = bottleUnit.value;
+      tabs.forEach(x=>{x.classList.toggle('active', x.dataset.mode==='total')});
+      mode='total';
+      waterWrap.style.display='none'; totalWrap.style.display='block'; percentWrap.style.display='none';
+      compute();
+    });
+
+    function clampPos(n){ return Math.max(0, Number(n||0)); }
+
+    function ratioToPercent(c,w){
+      c = clampPos(c); w = clampPos(w);
+      const pct = (c/(c+w))*100;
+      return isFinite(pct)? pct : 0;
+    }
+
+    function percentToRatio(pct){
+      // Given % concentrate of total, convert to 1:x where x = (100-pct)/pct
+      const p = clampPos(pct);
+      if(p<=0) return {c:0, w:1};
+      const w = (100-p)/p; // water parts per 1 part chem
+      return {c:1, w: w};
+    }
+
+    function updateFromRatio(){
+      const c = clampPos(ratioChem.value);
+      const w = clampPos(ratioWater.value);
+      const pct = ratioToPercent(c,w);
+      ratioBadge.textContent = `Ratio ${c}:${w} → ${pct.toFixed(2)}% concentrate`;
+    }
+
+    function applyPercentToRatio(){
+      const pr = percentToRatio(percent.value);
+      ratioChem.value = 1;
+      ratioWater.value = pr.w;
+      updateFromRatio();
+    }
+
+    function compute(){
+      let c = clampPos(ratioChem.value);
+      let w = clampPos(ratioWater.value);
+      if(mode==='percent'){
+        // Ensure ratio reflects percent field
+        applyPercentToRatio();
+        c = clampPos(ratioChem.value); w = clampPos(ratioWater.value);
+      }
+      const fracC = (c/(c+w));
+      const fracW = (w/(c+w));
+      if(!isFinite(fracC) || (c===0 && w===0)){
+        chemMain.textContent = '—'; waterMain.textContent='—'; chemAlt.textContent=''; waterAlt.textContent='';
+        return;
+      }
+
+      // Compute based on mode
+      let chemML=0, waterML=0;
+      if(mode==='water'){
+        const waterAmountML = Unit.toML(Number(water.value||0), waterUnit.value);
+        chemML = (c/w) * waterAmountML;
+        waterML = waterAmountML;
+      } else if(mode==='total' || mode==='percent'){
+        const totalAmountML = Unit.toML(Number(total.value||0), totalUnit.value);
+        chemML = totalAmountML * fracC;
+        waterML = totalAmountML * fracW;
+      }
+
+      // Display in the selected unit for the driving input, plus alternates
+      const baseUnit = (mode==='water') ? waterUnit.value : totalUnit.value;
+      const altUnit = baseUnit === 'L' ? 'mL' : baseUnit === 'mL' ? 'L' : baseUnit === 'oz' ? 'mL' : 'oz';
+
+      const chemBase = Unit.fromML(chemML, baseUnit);
+      const waterBase = Unit.fromML(waterML, baseUnit);
+      const chemAltVal = Unit.fromML(chemML, altUnit);
+      const waterAltVal = Unit.fromML(waterML, altUnit);
+
+      chemMain.textContent = `${Unit.fmt(chemBase)} ${baseUnit}`;
+      waterMain.textContent = `${Unit.fmt(waterBase)} ${baseUnit}`;
+      chemAlt.textContent = `${Unit.fmt(chemAltVal)} ${altUnit}`;
+      waterAlt.textContent = `${Unit.fmt(waterAltVal)} ${altUnit}`;
+    }
+
+    // Deep link: parse hash like #c=1&w=10&mode=water&amt=1&u=L
+    function applyHash(){
+      if(!location.hash) return;
+      const q = new URLSearchParams(location.hash.slice(1));
+      if(q.get('c')) ratioChem.value = +q.get('c');
+      if(q.get('w')) ratioWater.value = +q.get('w');
+      const m = q.get('mode');
+      if(['water','total','percent'].includes(m)){
+        mode=m; tabs.forEach(x=>x.classList.toggle('active', x.dataset.mode===m));
+        waterWrap.style.display = m==='water'? 'block':'none';
+        totalWrap.style.display = m==='total'? 'block':'none';
+        percentWrap.style.display = m==='percent'? 'block':'none';
+      }
+      if(q.get('amt')){
+        (mode==='water'? water : total).value = +q.get('amt');
+      }
+      if(q.get('u')){
+        (mode==='water'? waterUnit : totalUnit).value = q.get('u');
+      }
+      if(q.get('pct')){
+        percent.value = +q.get('pct');
+      }
+      updateFromRatio();
+      compute();
+    }
+
+    function updateHash(){
+      const params = new URLSearchParams();
+      params.set('c', ratioChem.value);
+      params.set('w', ratioWater.value);
+      params.set('mode', mode);
+      params.set('amt', (mode==='water'? water.value : total.value));
+      params.set('u', (mode==='water'? waterUnit.value : totalUnit.value));
+      if(mode==='percent') params.set('pct', percent.value);
+      history.replaceState(null, '', '#'+params.toString());
+    }
+
+    // Keep hash in sync (so users can share)
+    ['input','change'].forEach(evt=>{
+      document.addEventListener(evt, ()=>{ updateHash(); });
+    });
+
+    // ------- Chemical Library Data -------
+    // You can extend this list or import/export as JSON.
+    let CHEM_DB = [
+      {
+        id:'kc-gs', brand:'Koch‑Chemie', name:'Green Star (GS)',
+        uses:[
+          {area:'Exterior APC', ratio:{c:1,w:5}, note:'Heavier cut'},
+          {area:'Exterior APC', ratio:{c:1,w:30}, note:'Maintenance'},
+          {area:'Interior APC', ratio:{c:1,w:10}},
+          {area:'Interior APC', ratio:{c:1,w:20}},
+          {area:'Floors / Industrial', ratio:{c:1,w:40}},
+          {area:'Floors / Industrial', ratio:{c:1,w:120}},
+          {area:'Minimum', ratio:{c:1,w:3}, note:'Do not go stronger than 1:3'}
+        ]
+      },
+      {
+        id:'bh-surfex', brand:'Bilt‑Hamber', name:'Surfex HD',
+        uses:[
+          {area:'Heavy degreasing', ratio:{c:1,w:5}},
+          {area:'General exterior', ratio:{c:1,w:10}},
+          {area:'Interior / light', ratio:{c:1,w:20}}
+        ]
+      },
+      {
+        id:'cp-multix', brand:'CarPro', name:'MultiX*',
+        uses:[
+          {area:'Heavy', ratio:{c:1,w:10}},
+          {area:'General', ratio:{c:1,w:20}},
+          {area:'Maintenance', ratio:{c:1,w:50}, note:'*Verify label for surface.'}
+        ]
+      },
+      {
+        id:'mg-d101', brand:'Meguiar\'s', name:'All Purpose Cleaner (D101)',
+        uses:[
+          {area:'Heavy', ratio:{c:1,w:4}},
+          {area:'Medium', ratio:{c:1,w:10}},
+          {area:'Light', ratio:{c:1,w:20}}
+        ]
+      },
+      {
+        id:'gyeon-apc', brand:'Gyeon', name:'APC*',
+        uses:[
+          {area:'Pre‑wash', ratio:{c:1,w:5}},
+          {area:'General', ratio:{c:1,w:15}},
+          {area:'Interior', ratio:{c:1,w:20}, note:'*Check surface compatibility.'}
+        ]
+      }
+    ];
+
+    // Build brand filter
+    function refreshBrandFilter(){
+      const brandSel = $('#chemBrand');
+      const brands = Array.from(new Set(CHEM_DB.map(p=>p.brand))).sort();
+      brandSel.innerHTML = '<option value="">All brands</option>' + brands.map(b=>`<option value="${b}">${b}</option>`).join('');
+    }
+
+    function renderChemList(){
+      const q = ($('#chemSearch').value || '').toLowerCase();
+      const brand = $('#chemBrand').value;
+      const list = $('#chemList');
+      const items = CHEM_DB.filter(p=>{
+        const hitBrand = !brand || p.brand===brand;
+        const hitText = !q || (p.brand+" "+p.name).toLowerCase().includes(q);
+        return hitBrand && hitText;
+      });
+      if(items.length===0){ list.innerHTML = '<p class="kicker">No products matched. Try different search terms.</p>'; return; }
+      list.innerHTML = items.map(p=>{
+        const chips = p.uses.map(u=>{
+          const label = `${u.area}: ${u.ratio.c}:${u.ratio.w}`;
+          const note = u.note? ` — <span class="muted">${u.note}</span>`:'';
+          return `<button class="usechip" data-id="${p.id}" data-c="${u.ratio.c}" data-w="${u.ratio.w}" title="Apply ${label}">${label}</button>${note}`;
+        }).join(' ');
+        return `<div class="prod"><div class="brand">${p.brand}</div><h4>${p.name}</h4><div class="usechips">${chips}</div></div>`;
+      }).join('');
+      // Attach handlers after render
+      $$('#chemList .usechip').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          ratioChem.value = Number(btn.dataset.c); ratioWater.value = Number(btn.dataset.w);
+          updateFromRatio(); compute();
+          // Smooth scroll to inputs for feedback
+          window.scrollTo({top:0, behavior:'smooth'});
+        });
+      });
+    }
+
+    // Import / Export JSON
+    $('#exportDb').addEventListener('click',()=>{
+      const blob = new Blob([JSON.stringify(CHEM_DB, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'chemical_library.json';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    $('#importDbInput').addEventListener('change', async (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      try{
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if(Array.isArray(data)){
+          CHEM_DB = data; refreshBrandFilter(); renderChemList();
+
+    // ------- Bottle planning & adjustable water -------
+    const planBottleBtn = $('#planBottle');
+    const waterOverride = $('#waterOverride');
+    const waterOverrideUnit = $('#waterOverrideUnit');
+    const bottleChem = $('#bottleChem');
+    const bottleChemAlt = $('#bottleChemAlt');
+    const bottleWater = $('#bottleWater');
+    const bottleWaterAlt = $('#bottleWaterAlt');
+    const bottleNote = $('#bottleNote');
+
+    function planBottle(){
+      const c = Math.max(0, Number(ratioChem.value||0));
+      const w = Math.max(0, Number(ratioWater.value||0));
+      const fracC = c/(c+w), fracW = w/(c+w);
+      const bUnit = bottleUnit.value;
+      const bottleML = Unit.toML(Number(bottle.value||0), bUnit);
+      if(!isFinite(fracC) || bottleML<=0){
+        bottleChem.textContent='—'; bottleWater.textContent='—'; bottleChemAlt.textContent=''; bottleWaterAlt.textContent=''; bottleNote.textContent='';
+        return;
+      }
+      // recommended (exact ratio) amounts
+      const recChemML = bottleML * fracC;
+      const recWaterML = bottleML * fracW;
+
+      // override water if provided
+      let useWaterML = recWaterML;
+      if(waterOverride && waterOverride.value){
+        const u = waterOverrideUnit.value==='same' ? bUnit : waterOverrideUnit.value;
+        useWaterML = Unit.toML(Number(waterOverride.value||0), u);
+      }
+      // compute chem given chosen water, keeping bottle size fixed
+      let useChemML = Math.max(0, bottleML - useWaterML);
+
+      // Display in bottle unit + alt unit
+      const altUnit = bUnit === 'L' ? 'mL' : bUnit === 'mL' ? 'L' : bUnit === 'oz' ? 'mL' : 'oz';
+      bottleChem.textContent = `${Unit.fmt(Unit.fromML(useChemML, bUnit))} ${bUnit}`;
+      bottleWater.textContent = `${Unit.fmt(Unit.fromML(useWaterML, bUnit))} ${bUnit}`;
+      bottleChemAlt.textContent = `${Unit.fmt(Unit.fromML(useChemML, altUnit))} ${altUnit}`;
+      bottleWaterAlt.textContent = `${Unit.fmt(Unit.fromML(useWaterML, altUnit))} ${altUnit}`;
+
+      // deviation from exact ratio (if any)
+      const dev = recChemML>0 ? Math.abs(useChemML - recChemML)/recChemML*100 : 0;
+      bottleNote.textContent = dev>1 ? `Note: This deviates from the exact ${c}:${w} ratio by ${dev.toFixed(1)}%.` : `Exact for ${c}:${w}.`;
+    }
+
+    if(planBottleBtn){ planBottleBtn.addEventListener('click', planBottle); }
+    [bottle, bottleUnit, waterOverride, waterOverrideUnit, ratioChem, ratioWater].forEach(el=> el && el.addEventListener('input', planBottle));
+
+  } else { alert('Invalid JSON: expected an array'); }
+      }catch(err){ alert('Failed to import JSON: '+err.message); }
+    });
+
+    ['input','change'].forEach(ev=>{
+      $('#chemSearch').addEventListener(ev, renderChemList);
+      $('#chemBrand').addEventListener(ev, renderChemList);
+    });
+
+    // Initial
+    updateFromRatio();
+    applyHash();
+    compute();
+    refreshBrandFilter();
+    renderChemList();
   </script>
 </body>
 </html>
