@@ -5,41 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ShinePro — Simple Dilution Finder</title>
   <style>
-    :root{
-      --bg:#0b0f14; --panel:#111722; --muted:#9fb0c3; --text:#e9f0f7; --line:rgba(255,255,255,.08); --accent:#4cc9f0; --ring:0 0 0 3px rgba(76,201,240,.25);
+    :root {
+      --bg:#0b0f14; --panel:#111722; --muted:#9fb0c3; --text:#e9f0f7;
+      --line:rgba(255,255,255,.08); --accent:#4cc9f0; --ring:0 0 0 3px rgba(76,201,240,.25);
     }
-    [data-theme="light"]{ --bg:#f8fafc; --panel:#ffffff; --muted:#475569; --text:#0f172a; --line:rgba(2,6,23,.12); --accent:#0ea5e9; --ring:0 0 0 3px rgba(14,165,233,.25); }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0; font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text); display:flex; justify-content:center; padding:24px}
-    .app{width:min(1000px,100%)}
-    .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:14px}
-    h1{font-size:clamp(26px,3.5vw,36px); margin:0 0 8px; font-weight:800}
-    p.sub{color:var(--muted); margin:0 0 14px}
-    label{display:block; font-size:12px; color:var(--muted); letter-spacing:.3px; text-transform:uppercase; margin:0 0 6px}
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    @media (max-width:860px){.row{grid-template-columns:1fr}}
-    .ctl{display:flex; gap:8px; align-items:center; border:1px solid var(--line); border-radius:12px; padding:10px 12px}
-    .ctl:focus-within{box-shadow:var(--ring)}
-    .ctl input,.ctl select{flex:1; border:0; outline:0; background:transparent; color:var(--text); font-size:16px}
-    .btn{cursor:pointer; border:1px solid var(--line); background:transparent; color:var(--text); border-radius:12px; padding:10px 14px; font-weight:700}
-    .btn:hover{filter:brightness(1.06)}
-    .result{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    @media (max-width:650px){.result{grid-template-columns:1fr}}
-    .box{border:1px solid var(--line); border-radius:14px; padding:14px}
-    .big{font-size:clamp(28px,5vw,42px); font-weight:900}
-    .muted{color:var(--muted)}
-    .chips{display:flex; flex-wrap:wrap; gap:8px}
-    .chip{padding:8px 10px; border-radius:999px; border:1px solid var(--line); cursor:pointer; background:transparent}
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    .prod{border:1px solid var(--line); border-radius:14px; padding:12px}
-    .brand{font-size:12px; color:var(--muted); text-transform:uppercase}
-    input, select, button { min-height: 44px; }
-    .footer{margin-top:10px; display:flex; gap:10px; align-items:center}
-    .badge{display:inline-flex; align-items:center; gap:6px; border:1px dashed var(--line); border-radius:999px; padding:6px 12px; color:var(--muted)}
-    #ratioButtons{max-height:140px; overflow:auto; padding-bottom:6px}
-    #ratioButtonsInline{max-height:120px; overflow:auto; padding-bottom:6px}
+    [data-theme="light"] {
+      --bg:#f8fafc; --panel:#ffffff; --muted:#475569; --text:#0f172a;
+      --line:rgba(2,6,23,.12); --accent:#0ea5e9; --ring:0 0 0 3px rgba(14,165,233,.25);
+    }
+    * { box-sizing:border-box; }
+    html,body { height:100% }
+    body {
+      margin:0; font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      background:var(--bg); color:var(--text);
+      display:flex; justify-content:center; padding:24px;
+    }
+    .app { width:min(1000px,100%) }
+    .card {
+      background:var(--panel); border:1px solid var(--line);
+      border-radius:16px; padding:18px; margin-bottom:14px;
+    }
+    h1 { font-size:clamp(26px,3.5vw,36px); margin:0 0 8px; font-weight:800 }
+    p.sub { color:var(--muted); margin:0 0 14px }
+    label { display:block; font-size:12px; color:var(--muted);
+      letter-spacing:.3px; text-transform:uppercase; margin:0 0 6px }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+    @media (max-width:860px){ .row{grid-template-columns:1fr} }
+    .ctl {
+      display:flex; gap:8px; align-items:center;
+      border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+    }
+    .ctl:focus-within { box-shadow:var(--ring) }
+    .ctl input,.ctl select {
+      flex:1; border:0; outline:0; background:transparent;
+      color:var(--text); font-size:16px;
+    }
+    .btn {
+      cursor:pointer; border:1px solid var(--line); background:transparent;
+      color:var(--text); border-radius:12px; padding:10px 14px; font-weight:700;
+    }
+    .btn:hover { filter:brightness(1.06) }
+    .result { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+    @media (max-width:650px){ .result{grid-template-columns:1fr} }
+    .box { border:1px solid var(--line); border-radius:14px; padding:14px }
+    .big { font-size:clamp(28px,5vw,42px); font-weight:900 }
+    .muted { color:var(--muted) }
+    .chips { display:flex; flex-wrap:wrap; gap:8px }
+    .chip {
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--line); cursor:pointer; background:transparent;
+    }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .prod { border:1px solid var(--line); border-radius:14px; padding:12px }
+    .brand { font-size:12px; color:var(--muted); text-transform:uppercase }
+    input, select, button { min-height:44px }
+    .footer { margin-top:10px; display:flex; gap:10px; align-items:center }
+    .badge {
+      display:inline-flex; align-items:center; gap:6px;
+      border:1px dashed var(--line); border-radius:999px;
+      padding:6px 12px; color:var(--muted)
+    }
+    #ratioAll { max-height:120px; overflow:auto; }
+    #ratioCommon .chip { font-weight:700; }
   </style>
 </head>
 <body>
@@ -52,20 +80,17 @@
       </div>
     </header>
 
-    <!-- Simple calculator -->
-    <section class="card">
-      <h3 style=\"margin-top:0;margin-bottom:8px\">Quick Ratio Buttons</h3>
-      <div class=\"chips\" id=\"ratioButtons\"></div>
-    <section class="card">
+    <!-- Calculator -->
+    <section class="card" id="calcCard">
       <div class="row">
         <div>
-          <label for="ratio">Dilution (C:W or %)</label>
+          <label for="ratio">DILUTION (C:W OR %)</label>
           <div class="ctl">
-            <input id="ratio" placeholder="e.g. 1:100 or 1%">
+            <input id="ratio" placeholder="e.g. 1:20 or 10%">
           </div>
         </div>
         <div>
-          <label for="water">Water Amount (just water)</label>
+          <label for="water">WATER AMOUNT (JUST WATER)</label>
           <div class="ctl">
             <input id="water" type="number" min="0" step="0.01" value="1">
             <select id="unit">
@@ -77,18 +102,34 @@
           </div>
         </div>
       </div>
+
+      <!-- Quick ratio buttons -->
       <div class="row" style="margin-top:8px">
         <div style="grid-column:1 / -1">
-          <div id="ratioButtonsInline" class="chips" style="overflow:auto; max-height:120px"></div>
+          <div class="chips" id="ratioCommon"></div>
+          <div class="footer" style="margin-top:6px">
+            <button class="btn ghost" id="ratioToggle" type="button">Show all (1:5 → 1:200)</button>
+          </div>
+          <div id="ratioAll" class="chips" style="display:none;"></div>
         </div>
       </div>
+
       <div class="row" style="margin-top:10px">
         <div style="display:flex; align-items:flex-end"><button id="calc" class="btn">Calculate</button></div>
         <div class="muted">Example: <code>1:100</code> with <code>1000 mL</code> water → <strong>10 mL</strong> chemical + 1000 mL water.</div>
       </div>
+
       <div class="result" style="margin-top:12px">
-        <div class="box"><h3>Pour this much chemical</h3><div class="big" id="chemOut">—</div><div class="muted" id="chemAlt">&nbsp;</div></div>
-        <div class="box"><h3>Water (what you entered)</h3><div class="big" id="waterOut">—</div><div class="muted" id="waterAlt">&nbsp;</div></div>
+        <div class="box">
+          <h3>Pour this much chemical</h3>
+          <div class="big" id="chemOut">—</div>
+          <div class="muted" id="chemAlt">&nbsp;</div>
+        </div>
+        <div class="box">
+          <h3>Water (what you entered)</h3>
+          <div class="big" id="waterOut">—</div>
+          <div class="muted" id="waterAlt">&nbsp;</div>
+        </div>
       </div>
     </section>
 
@@ -111,126 +152,144 @@
     <p class="muted">Math: For dilution <em>C:W</em> and water amount <em>A</em>, chemical = <em>(C/W)×A</em>. % concentrate = <em>C/(C+W)×100</em>.</p>
   </div>
 
-  <script>
-    // Theme toggle
-    const root=document.documentElement;
-    const themeToggle=document.getElementById('themeToggle');
-    const savedTheme=localStorage.getItem('shinepro_theme');
-    if(savedTheme){ root.setAttribute('data-theme',savedTheme); if(savedTheme==='light') themeToggle.checked=true; }
-    themeToggle.addEventListener('change',()=>{ const t=themeToggle.checked?'light':'dark'; root.setAttribute('data-theme',t); localStorage.setItem('shinepro_theme',t); });
+<script>
+  // Theme toggle
+  const root=document.documentElement;
+  const themeToggle=document.getElementById('themeToggle');
+  const savedTheme=localStorage.getItem('shinepro_theme');
+  if(savedTheme){ root.setAttribute('data-theme',savedTheme); if(savedTheme==='light') themeToggle.checked=true; }
+  themeToggle.addEventListener('change',()=>{ const t=themeToggle.checked?'light':'dark'; root.setAttribute('data-theme',t); localStorage.setItem('shinepro_theme',t); });
 
-    // Units helper
-    const Unit={
-      toML(v,u){v=+v||0; if(u==='mL')return v; if(u==='L')return v*1000; if(u==='oz')return v*29.5735; if(u==='gal')return v*3785.41; return v},
-      fromML(v,u){if(u==='mL')return v; if(u==='L')return v/1000; if(u==='oz')return v/29.5735; if(u==='gal')return v/3785.41; return v},
-      fmt(v){if(!isFinite(v))return '—'; const n=Math.abs(v)>=100?0:Math.abs(v)>=10?1:2; return Number(v.toFixed(n)).toLocaleString()}
-    };
+  // Units helper
+  const Unit={
+    toML(v,u){v=+v||0; if(u==='mL')return v; if(u==='L')return v*1000; if(u==='oz')return v*29.5735; if(u==='gal')return v*3785.41; return v},
+    fromML(v,u){if(u==='mL')return v; if(u==='L')return v/1000; if(u==='oz')return v/29.5735; if(u==='gal')return v/3785.41; return v},
+    fmt(v){if(!isFinite(v))return '—'; const n=Math.abs(v)>=100?0:Math.abs(v)>=10?1:2; return Number(v.toFixed(n)).toLocaleString()}
+  };
 
-    // Parse ratio or % input
-    function parseRatio(txt){ if(!txt) return null; txt=String(txt).trim().toLowerCase();
-      const pct = txt.match(/([0-9]*\.?[0-9]+)\s*%/); if(pct){ const p=+pct[1]; if(p>0&&p<100){ return {c:1, w:(100-p)/p}; }}
-      const m = txt.match(/([0-9]*\.?[0-9]+)\s*(?:\:|\-|\/|x|to)\s*([0-9]*\.?[0-9]+)/); if(m){ return {c:+m[1], w:+m[2]}; }
-      const single = txt.match(/^([0-9]*\.?[0-9]+)$/); if(single){ return {c:1, w:+single[1]}; }
-      return null; }
+  // Parse ratio
+  function parseRatio(txt){
+    if(!txt) return null;
+    txt=String(txt).trim().toLowerCase();
+    const pct = txt.match(/([0-9]*\.?[0-9]+)\s*%/);
+    if(pct){ const p=+pct[1]; if(p>0&&p<100){ return {c:1, w:(100-p)/p}; }}
+    const m = txt.match(/([0-9]*\.?[0-9]+)\s*(?:\:|\-|\/|x|to)\s*([0-9]*\.?[0-9]+)/);
+    if(m){ return {c:+m[1], w:+m[2]}; }
+    const single = txt.match(/^([0-9]*\.?[0-9]+)$/);
+    if(single){ return {c:1, w:+single[1]}; }
+    return null;
+  }
 
-    // Calculator
-    const ratioInp=document.getElementById('ratio');
-    const waterInp=document.getElementById('water');
-    const unitSel=document.getElementById('unit');
-    const chemOut=document.getElementById('chemOut');
-    const chemAlt=document.getElementById('chemAlt');
-    const waterOut=document.getElementById('waterOut');
-    const waterAlt=document.getElementById('waterAlt');
-    function compute(){ const r=parseRatio(ratioInp.value); if(!r){ chemOut.textContent='—'; waterOut.textContent='—'; chemAlt.textContent=''; waterAlt.textContent=''; return; }
-      const Aml=Unit.toML(+waterInp.value||0, unitSel.value); const chem=(r.c/r.w)*Aml; const alt = unitSel.value==='L'?'mL': unitSel.value==='mL'?'L': unitSel.value==='oz'?'mL':'oz';
-      chemOut.textContent = `${Unit.fmt(Unit.fromML(chem, unitSel.value))} ${unitSel.value}`;
-      chemAlt.textContent = `${Unit.fmt(Unit.fromML(chem, alt))} ${alt}`;
-      waterOut.textContent = `${Unit.fmt(+waterInp.value||0)} ${unitSel.value}`;
-      waterAlt.textContent = `${Unit.fmt(Unit.fromML(Aml, alt))} ${alt}`;
-    }
-    document.getElementById('calc').addEventListener('click', compute);
-    [ratioInp, waterInp, unitSel].forEach(el=> el.addEventListener('input', compute));
+  // Calculator
+  const ratioInp=document.getElementById('ratio');
+  const waterInp=document.getElementById('water');
+  const unitSel=document.getElementById('unit');
+  const chemOut=document.getElementById('chemOut');
+  const chemAlt=document.getElementById('chemAlt');
+  const waterOut=document.getElementById('waterOut');
+  const waterAlt=document.getElementById('waterAlt');
 
-    // Inline ratio buttons just under the inputs (1:5 → 1:200)
-    (function(){
-      const host = document.getElementById('ratioButtonsInline');
-      if(!host) return;
-      let html = '';
-      const commons = [5,10,15,20,30,50,100,200];
-      // First, common picks
-      html += commons.map(w=>`<button class="chip ratio-btn" data-ratio="1:${w}">1:${w}</button>`).join(' ');
-      // Then the full set
-      html += '<hr style="border:0; border-top:1px solid var(--line); margin:6px 0">';
-      for(let w=5; w<=200; w++){
-        html += `<button class="chip ratio-btn" data-ratio="1:${w}">1:${w}</button>`;
+  function compute(){
+    const r=parseRatio(ratioInp.value);
+    if(!r){ chemOut.textContent='—'; waterOut.textContent='—'; chemAlt.textContent=''; waterAlt.textContent=''; return; }
+    const Aml=Unit.toML(+waterInp.value||0, unitSel.value);
+    const chem=(r.c/r.w)*Aml;
+    const alt = unitSel.value==='L'?'mL': unitSel.value==='mL'?'L': unitSel.value==='oz'?'mL':'oz';
+    chemOut.textContent = `${Unit.fmt(Unit.fromML(chem, unitSel.value))} ${unitSel.value}`;
+    chemAlt.textContent = `${Unit.fmt(Unit.fromML(chem, alt))} ${alt}`;
+    waterOut.textContent = `${Unit.fmt(+waterInp.value||0)} ${unitSel.value}`;
+    waterAlt.textContent = `${Unit.fmt(Unit.fromML(Aml, alt))} ${alt}`;
+  }
+  document.getElementById('calc').addEventListener('click', compute);
+  [ratioInp, waterInp, unitSel].forEach(el=> el.addEventListener('input', compute));
+
+  // Ratio buttons
+  (function () {
+    const ratioCommon = document.getElementById('ratioCommon');
+    const ratioAll = document.getElementById('ratioAll');
+    const ratioToggle = document.getElementById('ratioToggle');
+
+    function setRatio(val){ ratioInp.value = val; compute(); }
+
+    // Common buttons
+    const COMMON=[5,10,15,20,30,50,100,200];
+    ratioCommon.innerHTML = COMMON.map(w=>`<button class="chip ratio-btn" data-ratio="1:${w}" type="button">1:${w}</button>`).join(' ');
+    ratioCommon.querySelectorAll('.ratio-btn').forEach(btn=> btn.addEventListener('click',()=>setRatio(btn.dataset.ratio)));
+
+    // Full list
+    let fullBuilt=false;
+    ratioToggle.addEventListener('click',()=>{
+      const open=ratioAll.style.display!=='none';
+      if(!open && !fullBuilt){
+        let html='';
+        for(let w=5;w<=200;w++){
+          html += `<button class="chip ratio-btn" data-ratio="1:${w}" type="button">1:${w}</button>`;
+        }
+        ratioAll.innerHTML=html;
+        ratioAll.querySelectorAll('.ratio-btn').forEach(btn=> btn.addEventListener('click',()=>setRatio(btn.dataset.ratio)));
+        fullBuilt=true;
       }
-      host.innerHTML = html;
-      host.querySelectorAll('.ratio-btn').forEach(btn=> btn.addEventListener('click', ()=>{ ratioInp.value = btn.dataset.ratio; compute(); }));
-    })();
+      ratioAll.style.display=open?'none':'flex';
+      ratioToggle.textContent=open?'Show all (1:5 → 1:200)':'Hide all';
+    });
+  })();
 
-    // Ratio quick buttons (1:5 to 1:200)
-    const ratioButtons = document.getElementById('ratioButtons');
-    function buildRatioButtons(){
-      if(!ratioButtons) return;
-      let html='';
-      for(let w=5; w<=200; w++){
-        html += `<button class="chip ratio-btn" data-ratio="1:${w}" title="Use 1:${w}">1:${w}</button>`;
-      }
-      ratioButtons.innerHTML = html;
-      ratioButtons.querySelectorAll('.ratio-btn').forEach(btn=>{
-        btn.addEventListener('click', ()=>{ ratioInp.value = btn.dataset.ratio; compute(); window.scrollTo({top:0, behavior:'smooth'}); });
-      });
-    }
-    buildRatioButtons();
+  // Product DB
+  let DB=[
+    {brand:'Koch-Chemie', name:'Green Star (GS)', uses:[
+      {label:'Exterior (strong)', ratio:'1:5'}, {label:'Exterior (maintenance)', ratio:'1:30'},
+      {label:'Interior', ratio:'1:10'}, {label:'Interior (light)', ratio:'1:20'},
+      {label:'Floors', ratio:'1:40'}, {label:'Floors (light)', ratio:'1:120'}
+    ]},
+    {brand:'Bilt-Hamber', name:'Surfex HD', uses:[
+      {label:'Degreasing', ratio:'1:5'}, {label:'General exterior', ratio:'1:10'}, {label:'Interior / light', ratio:'1:20'}
+    ]},
+    {brand:'CarPro', name:'MultiX', uses:[
+      {label:'Heavy', ratio:'1:10'}, {label:'General', ratio:'1:20'}, {label:'Maintenance', ratio:'1:50'}
+    ]},
+    {brand:"Meguiar's", name:'D101 All Purpose Cleaner', uses:[
+      {label:'Heavy', ratio:'1:4'}, {label:'Medium', ratio:'1:10'}, {label:'Light', ratio:'1:20'}
+    ]},
+    {brand:'Gyeon', name:'APC', uses:[
+      {label:'Pre-wash', ratio:'1:5'}, {label:'General', ratio:'1:15'}, {label:'Interior', ratio:'1:20'}
+    ]}
+  ];
 
-    // Product DB
-    let DB=[
-      {brand:'Koch‑Chemie', name:'Green Star (GS)', uses:[
-        {label:'Exterior (strong)', ratio:'1:5'}, {label:'Exterior (maintenance)', ratio:'1:30'},
-        {label:'Interior', ratio:'1:10'}, {label:'Interior (light)', ratio:'1:20'},
-        {label:'Floors', ratio:'1:40'}, {label:'Floors (light)', ratio:'1:120'}
-      ]},
-      {brand:'Bilt‑Hamber', name:'Surfex HD', uses:[
-        {label:'Degreasing', ratio:'1:5'}, {label:'General exterior', ratio:'1:10'}, {label:'Interior / light', ratio:'1:20'}
-      ]},
-      {brand:'CarPro', name:'MultiX', uses:[
-        {label:'Heavy', ratio:'1:10'}, {label:'General', ratio:'1:20'}, {label:'Maintenance', ratio:'1:50'}
-      ]},
-      {brand:"Meguiar's", name:'D101 All Purpose Cleaner', uses:[
-        {label:'Heavy', ratio:'1:4'}, {label:'Medium', ratio:'1:10'}, {label:'Light', ratio:'1:20'}
-      ]},
-      {brand:'Gyeon', name:'APC', uses:[
-        {label:'Pre‑wash', ratio:'1:5'}, {label:'General', ratio:'1:15'}, {label:'Interior', ratio:'1:20'}
-      ]}
-    ];
+  const productsEl=document.getElementById('products');
+  const searchEl=document.getElementById('search');
+  const brandEl=document.getElementById('brand');
 
-    const productsEl=document.getElementById('products');
-    const searchEl=document.getElementById('search');
-    const brandEl=document.getElementById('brand');
+  function refreshBrandFilter(){
+    const brands=[...new Set(DB.map(p=>p.brand))].sort();
+    brandEl.innerHTML='<option value="">All brands</option>'+brands.map(b=>`<option value="${b}">${b}</option>`).join('');
+  }
 
-    function refreshBrandFilter(){ const brands=[...new Set(DB.map(p=>p.brand))].sort(); brandEl.innerHTML='<option value="">All brands</option>'+brands.map(b=>`<option value="${b}">${b}</option>`).join(''); }
+  function renderProducts(){
+    const q=(searchEl.value||'').toLowerCase();
+    const brand=brandEl.value;
+    const items=DB.filter(p=>{
+      const hitBrand=!brand||p.brand===brand;
+      const hitText=!q||(p.brand+" "+p.name).toLowerCase().includes(q);
+      return hitBrand&&hitText;
+    });
+    if(items.length===0){ productsEl.innerHTML='<p class="muted">No matches. Try a different search.</p>'; return; }
+    productsEl.innerHTML=items.map(p=>{
+      const chips=p.uses.map(u=>`<button class="chip" data-ratio="${u.ratio}" title="Apply ${u.ratio}">${u.label}: ${u.ratio}</button>`).join(' ');
+      return `<div class="prod"><div class="brand">${p.brand}</div><div style="font-weight:700; margin:4px 0 8px">${p.name}</div><div class="chips">${chips}</div></div>`;
+    }).join('');
+    productsEl.querySelectorAll('button.chip').forEach(btn=>{
+      btn.addEventListener('click',()=>{ ratioInp.value=btn.dataset.ratio; compute(); window.scrollTo({top:0,behavior:'smooth'}); });
+    });
+  }
 
-    function renderProducts(){ const q=(searchEl.value||'').toLowerCase(); const brand=brandEl.value;
-      const items=DB.filter(p=>{ const hitBrand=!brand||p.brand===brand; const hitText=!q||(p.brand+" "+p.name).toLowerCase().includes(q); return hitBrand&&hitText; });
-      if(items.length===0){ productsEl.innerHTML='<p class="muted">No matches. Try a different search.</p>'; return; }
-      productsEl.innerHTML=items.map(p=>{
-        const chips=p.uses.map(u=>`<button class="chip" data-ratio="${u.ratio}" title="Apply ${u.ratio}">${u.label}: ${u.ratio}</button>`).join(' ');
-        return `<div class="prod"><div class="brand">${p.brand}</div><div style="font-weight:700; margin:4px 0 8px">${p.name}</div><div class="chips">${chips}</div></div>`;
-      }).join('');
-      // Bind chip clicks
-      productsEl.querySelectorAll('button.chip').forEach(btn=>{
-        btn.addEventListener('click',()=>{ ratioInp.value=btn.dataset.ratio; compute(); window.scrollTo({top:0,behavior:'smooth'}); });
-      });
-    }
+  refreshBrandFilter();
+  renderProducts();
+  searchEl.addEventListener('input', renderProducts);
+  brandEl.addEventListener('input', renderProducts);
 
-    refreshBrandFilter();
-    renderProducts();
-    searchEl.addEventListener('input', renderProducts);
-    brandEl.addEventListener('input', renderProducts);
-
-    // First paint
-    ratioInp.value = '1:10';
-    compute();
-  </script>
+  // Default
+  ratioInp.value='1:10';
+  compute();
+</script>
 </body>
 </html>
