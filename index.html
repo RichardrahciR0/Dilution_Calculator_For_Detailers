@@ -38,6 +38,7 @@
     input, select, button { min-height: 44px; }
     .footer{margin-top:10px; display:flex; gap:10px; align-items:center}
     .badge{display:inline-flex; align-items:center; gap:6px; border:1px dashed var(--line); border-radius:999px; padding:6px 12px; color:var(--muted)}
+    #ratioButtons{max-height:140px; overflow:auto; padding-bottom:6px}
   </style>
 </head>
 <body>
@@ -143,6 +144,21 @@
     }
     document.getElementById('calc').addEventListener('click', compute);
     [ratioInp, waterInp, unitSel].forEach(el=> el.addEventListener('input', compute));
+
+    // Ratio quick buttons (1:5 to 1:200)
+    const ratioButtons = document.getElementById('ratioButtons');
+    function buildRatioButtons(){
+      if(!ratioButtons) return;
+      let html='';
+      for(let w=5; w<=200; w++){
+        html += `<button class="chip ratio-btn" data-ratio="1:${w}" title="Use 1:${w}">1:${w}</button>`;
+      }
+      ratioButtons.innerHTML = html;
+      ratioButtons.querySelectorAll('.ratio-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{ ratioInp.value = btn.dataset.ratio; compute(); window.scrollTo({top:0, behavior:'smooth'}); });
+      });
+    }
+    buildRatioButtons();
 
     // Product DB
     let DB=[
