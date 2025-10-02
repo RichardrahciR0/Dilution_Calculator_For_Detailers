@@ -39,6 +39,7 @@
     .footer{margin-top:10px; display:flex; gap:10px; align-items:center}
     .badge{display:inline-flex; align-items:center; gap:6px; border:1px dashed var(--line); border-radius:999px; padding:6px 12px; color:var(--muted)}
     #ratioButtons{max-height:140px; overflow:auto; padding-bottom:6px}
+    #ratioButtonsInline{max-height:120px; overflow:auto; padding-bottom:6px}
   </style>
 </head>
 <body>
@@ -74,6 +75,11 @@
               <option value="gal">gal</option>
             </select>
           </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div style="grid-column:1 / -1">
+          <div id="ratioButtonsInline" class="chips" style="overflow:auto; max-height:120px"></div>
         </div>
       </div>
       <div class="row" style="margin-top:10px">
@@ -144,6 +150,23 @@
     }
     document.getElementById('calc').addEventListener('click', compute);
     [ratioInp, waterInp, unitSel].forEach(el=> el.addEventListener('input', compute));
+
+    // Inline ratio buttons just under the inputs (1:5 → 1:200)
+    (function(){
+      const host = document.getElementById('ratioButtonsInline');
+      if(!host) return;
+      let html = '';
+      const commons = [5,10,15,20,30,50,100,200];
+      // First, common picks
+      html += commons.map(w=>`<button class="chip ratio-btn" data-ratio="1:${w}">1:${w}</button>`).join(' ');
+      // Then the full set
+      html += '<hr style="border:0; border-top:1px solid var(--line); margin:6px 0">';
+      for(let w=5; w<=200; w++){
+        html += `<button class="chip ratio-btn" data-ratio="1:${w}">1:${w}</button>`;
+      }
+      host.innerHTML = html;
+      host.querySelectorAll('.ratio-btn').forEach(btn=> btn.addEventListener('click', ()=>{ ratioInp.value = btn.dataset.ratio; compute(); }));
+    })();
 
     // Ratio quick buttons (1:5 to 1:200)
     const ratioButtons = document.getElementById('ratioButtons');
